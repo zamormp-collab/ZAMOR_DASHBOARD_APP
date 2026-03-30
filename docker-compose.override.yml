@@ -1,0 +1,32 @@
+# Development overrides for docker-compose.yml
+# Used automatically by 'docker-compose up' for local development
+# Configure: NODE_ENV=development, volumes for hot reload, exposed ports for debugging
+
+version: '3.8'
+
+services:
+  dashboard:
+    # Mount source code for hot reload during development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    # Development environment variables
+    environment:
+      - NODE_ENV=development
+      - DEBUG=app:*
+    # Expose debugging port
+    ports:
+      - "9229:9229"
+    # Run with nodemon for auto-reload on file changes
+    command: npm run dev
+
+  postgres:
+    # Development database doesn't need as strict health checks
+    healthcheck:
+      interval: 5s
+      timeout: 3s
+      retries: 1
+      start_period: 5s
+    # Expose database port for local access
+    ports:
+      - "5432:5432"
