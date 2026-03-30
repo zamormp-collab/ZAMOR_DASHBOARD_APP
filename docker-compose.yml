@@ -16,10 +16,17 @@ services:
       - DB_USER=dashboard_user
       - DB_PASSWORD=dashboard_password
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - devops-net
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   postgres:
     image: postgres:15-alpine
@@ -33,6 +40,12 @@ services:
     networks:
       - devops-net
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dashboard_user -d devops_dashboard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
 networks:
   devops-net:
