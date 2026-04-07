@@ -1,0 +1,101 @@
+# ================================================
+# INTERMEDIATE LEVEL - GitHub Actions CI Workflow
+# ================================================
+#
+# Learning objectives:
+# ✓ Multiple jobs
+# ✓ Job dependencies (needs)
+# ✓ Conditional execution
+# ✓ Matrix strategy for multiple configurations
+# ✓ Basic artifacts
+#
+# Key concepts:
+# - 2 jobs with dependency chain
+# - Conditional job execution
+# - Matrix for testing multiple Node versions
+# - Artifact upload basics
+# - Caching for performance
+
+name: Standard CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Job 1: Run tests
+  test:
+    runs-on: ubuntu-latest
+    
+    # Test on multiple Node versions
+    strategy:
+      matrix:
+        node-version: [ 16.x, 18.x, 20.x ]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'  # Cache npm packages for faster builds
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    # Optional: Generate coverage report
+    - name: Generate coverage report
+      run: npm test -- --coverage
+      continue-on-error: true
+    
+    # Upload coverage as artifact for review
+    - name: Upload coverage artifacts
+      uses: actions/upload-artifact@v4
+      if: always()  # Always upload, even if tests fail
+      with:
+        name: coverage-reports-node-${{ matrix.node-version }}
+        path: coverage/
+        retention-days: 30
+
+  # Job 2: Build (only runs if test succeeds)
+  build:
+    needs: test  # This job depends on test job
+    runs-on: ubuntu-latest
+    
+    # Only run on push (not on pull requests)
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+    
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v6
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    
+    - name: Display build info
+      run: |
+        echo "Building application..."
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+    
+    - name: Run build from npm script
+      run: npm run build
+    
+    # Upload coverage artifacts from build
+    - name: Upload test coverage
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: build-coverage
+        path: coverage/
+        retention-days: 7

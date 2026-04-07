@@ -1,3 +1,28 @@
+# =====================================================
+# ADVANCED LEVEL - GitHub Actions CI/CD Workflow
+# =====================================================
+#
+# Learning objectives:
+# ✓ Multi-job workflows with complex dependencies
+# ✓ Semantic versioning (automated version bumping)
+# ✓ GitHub Releases and artifacts
+# ✓ Permissions management
+# ✓ Docker image building
+# ✓ Pre-release versions (alpha, beta, pre)
+#
+# Key concepts:
+# - 3 jobs: test → build → deploy
+# - Semantic-release for automated versioning
+# - GitHub Releases creation
+# - Docker Buildx for container images
+# - Explicit permissions for security
+# - Production-ready CI/CD pipeline
+#
+# Related files:
+# - See WORKFLOWS_LEARNING_GUIDE.md for learning progression
+# - basic-ci.yml for beginner examples
+# - standard-ci.yml for intermediate examples
+
 name: Dashboard CI
 
 on:
