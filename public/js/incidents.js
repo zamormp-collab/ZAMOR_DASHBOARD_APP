@@ -83,7 +83,9 @@ function displayIncidents(incidents) {
       <td><strong>#${incident.id}</strong></td>
       <td><strong>${escapeHtml(incident.title)}</strong></td>
       <td>
-        <small class="text-muted">${truncate(incident.description || '(no description)', 50)}</small>
+        <span class="text-muted" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="${escapeHtml(incident.description || '(no description)')}">
+          ${truncate(incident.description || '(no description)', 50)}
+        </span>
         <br>
         <small class="text-muted">${createdDate}</small>
       </td>
@@ -104,6 +106,9 @@ function displayIncidents(incidents) {
     
     tbody.appendChild(row);
   });
+  
+  // Initialize tooltips for new elements
+  initializeTooltips();
   
   emptyState.style.display = 'none';
   tableContainer.style.display = 'block';
@@ -232,6 +237,16 @@ async function deleteIncident(id) {
     console.error('Error deleting incident:', error);
     showToast('Error: ' + error.message, 'danger');
   }
+}
+
+/**
+ * Initialize Bootstrap tooltips
+ */
+function initializeTooltips() {
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(tooltipTriggerEl => {
+    new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 }
 
 /**
