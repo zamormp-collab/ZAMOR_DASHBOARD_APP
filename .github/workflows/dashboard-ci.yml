@@ -19,6 +19,10 @@ jobs:
 # Étape 3: Installer les dépendances
     - name: Install dependencies
       run: npm install
+# NOUVELLE ÉTAPE: Linting
+    - name: Lint code with ESLint
+      run: npm run lint
+# Vérifie que le code suit les standards
 # Étape 4: Exécuter les tests
     - name: Run tests
       run: npm test
