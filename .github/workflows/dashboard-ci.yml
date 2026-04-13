@@ -1,0 +1,27 @@
+name: Dashboard CI Pipeline
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+# Étape 1: Télécharger le code
+    - name: Checkout code
+      uses: actions/checkout@v6
+# Étape 2: Installer Node.js
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v6
+      with:
+        node-version: '20'
+# Étape 3: Installer les dépendances
+    - name: Install dependencies
+      run: npm install
+# Étape 4: Exécuter les tests
+    - name: Run tests
+      run: npm test
+# Étape 5: Compiler l'application
+    - name: Build application
+      run: npm run build
